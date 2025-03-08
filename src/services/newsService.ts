@@ -1,44 +1,25 @@
 
 import { toast } from "sonner";
-import { fetchArticles, fetchArticleById as fetchSupabaseArticleById, Article as SupabaseArticle } from "./supabaseService";
 
 // Define types for our news data
 export interface NewsArticle {
-	id: string;
-	title: string;
-	description: string;
-	content: string;
-	url: string;
-	image: string;
-	publishedAt: string;
-	source: {
-		name: string;
-		url: string;
-	};
-	category: string;
+  id: string;
+  title: string;
+  description: string;
+  content: string;
+  url: string;
+  image: string;
+  publishedAt: string;
+  source: {
+    name: string;
+    url: string;
+  };
+  category: string;
 }
 
 export type NewsCategory = 'general' | 'business' | 'technology' | 'entertainment' | 'sports' | 'science' | 'health';
 
-// Function to convert Supabase Article to NewsArticle format
-const mapArticleToNewsArticle = (article: SupabaseArticle): NewsArticle => {
-	return {
-		id: article.id,
-		title: article.title,
-		description: article.description || "",
-		content: article.content,
-		url: article.url || "",
-		image: article.image_url || "",
-		publishedAt: article.published_at,
-		source: {
-			name: "News Aggregator", // This would come from companies table in a full implementation
-			url: "",
-		},
-		category: article.category || "general",
-	};
-};
-
-// Mock data for development (we'll use this if the Supabase data is empty)
+// Mock data for development (we'll replace this with real API calls later)
 const mockNewsArticles: NewsArticle[] = [
   {
     id: "1",
@@ -127,59 +108,41 @@ const mockNewsArticles: NewsArticle[] = [
 ];
 
 export const fetchNews = async (category: NewsCategory = 'general', count: number = 10): Promise<NewsArticle[]> => {
-	try {
-		console.log(`Fetching ${count} news articles for category: ${category}`);
-		
-		// Try to get articles from Supabase
-		const articles = await fetchArticles(category, "", count);
-		
-		if (articles.length > 0) {
-			return articles.map(mapArticleToNewsArticle);
-		}
-		
-		// Fallback to mock data if no articles in Supabase
-		console.log("No articles found in Supabase, using mock data");
-		
-		// Simulate API delay
-		await new Promise(resolve => setTimeout(resolve, 800));
-		
-		// Filter by category if not 'general'
-		const filteredArticles = category === 'general' 
-			? mockNewsArticles 
-			: mockNewsArticles.filter(article => article.category === category);
-			
-		return filteredArticles.slice(0, count);
-	} catch (error) {
-		console.error('Error fetching news:', error);
-		toast.error('Failed to fetch news. Please try again.');
-		return [];
-	}
+  try {
+    // In a real implementation, this would make an API call to a news service
+    // For now, we'll use mock data
+    console.log(`Fetching ${count} news articles for category: ${category}`);
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // Filter by category if not 'general'
+    const filteredArticles = category === 'general' 
+      ? mockNewsArticles 
+      : mockNewsArticles.filter(article => article.category === category);
+      
+    return filteredArticles.slice(0, count);
+  } catch (error) {
+    console.error('Error fetching news:', error);
+    toast.error('Failed to fetch news. Please try again.');
+    return [];
+  }
 };
 
 export const fetchArticleById = async (id: string): Promise<NewsArticle | null> => {
-	try {
-		// Try to get article from Supabase
-		const article = await fetchSupabaseArticleById(id);
-		
-		if (article) {
-			return mapArticleToNewsArticle(article);
-		}
-		
-		// Fallback to mock data if article not found in Supabase
-		console.log("Article not found in Supabase, checking mock data");
-		
-		// Simulate API delay
-		await new Promise(resolve => setTimeout(resolve, 500));
-		
-		const mockArticle = mockNewsArticles.find(article => article.id === id);
-		if (!mockArticle) {
-			throw new Error('Article not found');
-		}
-		
-		return mockArticle;
-	} catch (error) {
-		console.error('Error fetching article:', error);
-		toast.error('Failed to fetch article. Please try again.');
-		return null;
-	}
+  try {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const article = mockNewsArticles.find(article => article.id === id);
+    if (!article) {
+      throw new Error('Article not found');
+    }
+    
+    return article;
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    toast.error('Failed to fetch article. Please try again.');
+    return null;
+  }
 };

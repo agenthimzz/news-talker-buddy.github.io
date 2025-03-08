@@ -9,6 +9,9 @@
 - Supabase service for database operations
 - README.md with database structure documentation
 
+### Fixed
+- Resolved name collision in newsService.ts by renaming imported fetchArticleById to fetchSupabaseArticleById
+
 ## 2023-09-29
 
 ### Added

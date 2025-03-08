@@ -1,5 +1,6 @@
+
 import { toast } from "sonner";
-import { fetchArticles, fetchArticleById, Article as SupabaseArticle } from "./supabaseService";
+import { fetchArticles, fetchArticleById as fetchSupabaseArticleById, Article as SupabaseArticle } from "./supabaseService";
 
 // Define types for our news data
 export interface NewsArticle {
@@ -158,7 +159,7 @@ export const fetchNews = async (category: NewsCategory = 'general', count: numbe
 export const fetchArticleById = async (id: string): Promise<NewsArticle | null> => {
 	try {
 		// Try to get article from Supabase
-		const article = await fetchArticleById(id);
+		const article = await fetchSupabaseArticleById(id);
 		
 		if (article) {
 			return mapArticleToNewsArticle(article);
